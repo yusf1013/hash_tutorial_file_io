@@ -1,4 +1,5 @@
 credentials = {}
+salt = "abcd"
 
 
 def read_credentials():
@@ -39,15 +40,15 @@ def main():
             password = input("password: ")
             if username not in credentials:
                 print("User does not exist")
-            elif credentials[username] == my_hash(password):
+            elif credentials[username] == my_hash(password+salt):
                 print("success")
             else:
                 print("failed")
         elif choice == "2":
             username = input("username: ")
             password = input("password: ")
-            credentials[username] = my_hash(password)
-            write_to_file(username, my_hash(password))
+            credentials[username] = my_hash(password+salt)
+            write_to_file(username, my_hash(password+salt))
         else:
             print("error")
 
