@@ -1,5 +1,8 @@
+import random
+
 credentials = {}
 salt = "abcd"
+search_str = "abcdefghijklmnopqrstuvwxyz"
 
 
 def read_credentials():
@@ -23,12 +26,20 @@ def write_to_file(username, password):
 
 
 def my_hash(in_str):
-    search_str = "abcdefghijklmnopqrstuvwxyz"
     sum = 0
     for char in in_str:
         sum += search_str.find(char) + 1
 
     return sum
+
+
+def match_password(user_pass, actual_hash):
+    for pepper in search_str:
+        result = my_hash(user_pass + pepper) == actual_hash
+        if result:
+            return True
+
+    return False
 
 
 def main():
@@ -40,15 +51,16 @@ def main():
             password = input("password: ")
             if username not in credentials:
                 print("User does not exist")
-            elif credentials[username] == my_hash(password+salt):
+            elif match_password(password+salt, credentials[username]):
                 print("success")
             else:
                 print("failed")
         elif choice == "2":
             username = input("username: ")
             password = input("password: ")
-            credentials[username] = my_hash(password+salt)
-            write_to_file(username, my_hash(password+salt))
+            pepper = random.choice(search_str)
+            credentials[username] = my_hash(password+salt+pepper)
+            write_to_file(username, my_hash(password+salt+pepper))
         else:
             print("error")
 
